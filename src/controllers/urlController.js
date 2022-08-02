@@ -51,5 +51,28 @@ async function deleteURL(req, res){
     }
 }
 
+async function getUserURLs(req, res){
+    const {id: userId} = res.locals
+    
+    try {
+        const {rows: userTotalVisitCounts} = await connection.query(`
+        SELECT urls."userId" as id, SUM(urls."visitCount") as visitCount, users.name as name FROM urls 
+        JOIN users ON urls."userId" = users.id 
+        WHERE "userId" = $1 
+        GROUP BY "userId", users.name`,[userId])
+        
+        const {rows: userShortenedUrls} = await connection.query(`SELECT id, "shortURL", url, "visitCount"  FROM urls WHERE "userId" = $1`,[userId])
 
-export {shortenURL, getShortURL, OpenShortURL, deleteURL}
+        res.send(mountOutput(userTotalVisitCounts[0], userShortenedUrls))
+    } catch (error) {
+        res.sendStatus(500)
+    }
+}
+
+function mountOutput(obj, arr){
+    const output = {...obj, shortenedUrls: arr}
+    return output
+
+}
+
+export {shortenURL, getShortURL, OpenShortURL, deleteURL, getUserURLs}

@@ -27,6 +27,7 @@ async function validateRegister(req,res, next){
     }
 }
 
+
 async function validateLogin(req, res, next){
     const user = req.body
     try {
@@ -49,13 +50,29 @@ async function validateLogin(req, res, next){
 
         delete userDB[0].password
         res.locals.user = userDB[0]
-          
         next()
 
     } catch (error) {
-        
-        return res.sendStatus(500)
+         res.sendStatus(500)
     }
 }
 
-export {validateRegister, validateLogin}
+async function validateUserExistence(req, res, next){
+    
+    try {
+        const {id: userId} = res.locals
+        const {rows: user} = await connection.query(`SELECT * FROM users WHERE id = $1`,[userId])
+        if(user.length === 0 ){
+            return res.status(404).send("Usuário não encontrado")
+        }
+
+        next()
+
+
+    } catch (error) {
+        res.sendStatus(500)
+    }
+}
+
+
+export {validateRegister, validateLogin, validateUserExistence}

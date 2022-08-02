@@ -5,8 +5,6 @@ const routes = Router()
 
 routes.post("/signup", validateRegister, RegisterUser)
 routes.post("/signin", validateLogin, LoginUser)
-
-routes.get("/users/me")
 routes.get("/ranking")
 
 
