@@ -10,11 +10,9 @@ async function validateURL(req,res,next){
     
         const validateSchema = URLSchema.validate(url, {abortEarly: false})
         if(validateSchema.error){
-         
             const errors = validateSchema.error.details.map(error => error.message)
             return res.send(errors).status(422)
         }
-        
         
         next()
 
@@ -24,26 +22,23 @@ async function validateURL(req,res,next){
 }
 
 async function validateGetShortURLByParams(req, res, next){
+    const {id, shortUrl} = req.params
     let Clause = {column: "", value:""}
-
+    
     try {
-        if(req.params.id){
-            Clause = {column: 'id', value: req.params.id}
-        }
-        if(req.params.shortUrl){
-            Clause = {column: "shortURL", value: req.params.shortUrl}
-        }
-        
-        
-        const getShortURLQuery = `SELECT urls.id, urls."shortURL" as shortUrl, urls.url FROM urls WHERE "${Clause.column}" = $1` 
+        id ?  
+        Clause = {column: 'id', value: id } : 
+        Clause = {column: "shortURL", value: shortUrl}
+      
+        const getShortURLQuery = `
+        SELECT urls.id, urls."shortURL" as shortUrl, urls.url FROM urls WHERE "${Clause.column}" = $1` 
 
-        console.log(getShortURLQuery)
             const {rows: shortURL} = await connection.query(getShortURLQuery, [Clause.value])
             if(shortURL.length === 0 ){
                 return res.status(400).send("Esta URL não existe")
             }
+
             res.locals.shortURL = shortURL[0]
-            
             next()
 
 
