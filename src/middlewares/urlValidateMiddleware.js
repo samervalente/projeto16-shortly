@@ -5,17 +5,9 @@ import URLSchema from "../schemas/urlSchema.js"
 
 async function validateURL(req,res,next){
     const url = req.body
+
     try {
-        
-        if(req.params.id){
-            const {rows: shortURL} = await connection.query(`SELECT urls.id, urls."shortURL" as shortUrl, urls.url FROM urls WHERE id = $1`,[req.params.id])
-            if(shortURL.length === 0 ){
-                return res.status(400).send("Esta URL não existe")
-            }
-            res.locals.shortURL = shortURL[0]
-        }
-
-
+    
         const validateSchema = URLSchema.validate(url, {abortEarly: false})
         if(validateSchema.error){
          
@@ -31,5 +23,35 @@ async function validateURL(req,res,next){
     }
 }
 
+async function validateGetShortURLByParams(req, res, next){
+    let Clause = {column: "", value:""}
 
-export {validateURL}
+    try {
+        if(req.params.id){
+            Clause = {column: 'id', value: req.params.id}
+        }
+        if(req.params.shortUrl){
+            Clause = {column: "shortURL", value: req.params.shortUrl}
+        }
+        
+        
+        const getShortURLQuery = `SELECT urls.id, urls."shortURL" as shortUrl, urls.url FROM urls WHERE "${Clause.column}" = $1` 
+
+        console.log(getShortURLQuery)
+            const {rows: shortURL} = await connection.query(getShortURLQuery, [Clause.value])
+            if(shortURL.length === 0 ){
+                return res.status(400).send("Esta URL não existe")
+            }
+            res.locals.shortURL = shortURL[0]
+            
+            next()
+
+
+    } catch (error) {
+        console.log(error)
+        return res.sendStatus(500)
+    }
+}
+
+
+export {validateURL, validateGetShortURLByParams}
