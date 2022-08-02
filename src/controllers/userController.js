@@ -1,28 +1,30 @@
 import jwt from "jsonwebtoken"
 import connection from "../database/postgre.js"
-import bcrypt from "bcrypt"
+
 
 async function RegisterUser(req, res){
-    
     try {
-        const passwordCrypt = bcrypt.hashSync(req.body.password,10)
-        const user = {...req.body, password: passwordCrypt}
-        const {name, email, password} = user
-
+        const {name, email, password} = res.locals.user
         await connection.query(`INSERT INTO users (name, email, password) VALUES ($1,$2,$3)`,[name, email, password])
-
-        res.send(user).status(201)
-
-        
+        res.status(201).send(res.locals.user)
 
     } catch (error) {
-        if(error.code = '23505'){
-            return res.status(409).send('Usuário Existente')
-        }
-
          res.sendStatus(500)
-    }
-    
+    } 
 }
 
-export {RegisterUser}
+async function LoginUser(req, res){
+    try {
+        const user = res.locals.user
+        const token = jwt.sign({id: user.id}, 'secret')
+       
+        return res.status(200).send({...user, token})
+
+    } catch (error) {
+        return res.sendStatus(500)
+    }
+}
+
+
+
+export {RegisterUser, LoginUser}
