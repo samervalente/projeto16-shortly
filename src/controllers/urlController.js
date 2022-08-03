@@ -34,8 +34,7 @@ async function OpenShortURL(req, res){
     const shortURL = res.locals.shortURL
     try {
         await connection.query(`UPDATE urls SET "visitCount" = urls."visitCount" + 1 WHERE id = $1`,[shortURL.id])
-        return res.send(shortURL)
-           res.redirect(shortURL.url)
+        res.redirect(shortURL.url)
     } catch (error) {
         return res.sendStatus(500)
     }
@@ -69,10 +68,28 @@ async function getUserURLs(req, res){
     }
 }
 
+
 function mountOutput(obj, arr){
     const output = {...obj, shortenedUrls: arr}
     return output
 
 }
 
-export {shortenURL, getShortURL, OpenShortURL, deleteURL, getUserURLs}
+async function getRanking(req, res){
+    try {
+        const {rows: ranking} = await connection.query(`
+        SELECT "userId" as id, users.name, COUNT("shortURL") as "linksCount",  SUM("visitCount") as "visitCount" 
+        FROM urls 
+        INNER JOIN users
+        ON "userId" = users.id
+        GROUP BY "userId", users.name
+        ORDER BY "visitCount" DESC
+        LIMIT 10`)
+
+        res.status(200).send(ranking)
+    } catch (error) {
+        res.sendStatus(500)
+    }
+}
+
+export {shortenURL, getShortURL, OpenShortURL, deleteURL, getUserURLs, getRanking}

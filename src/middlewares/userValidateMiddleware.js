@@ -8,7 +8,7 @@ async function validateRegister(req,res, next){
         const validateSchema = RegisterSchema.validate(user, {abortEarly: false})
         if(validateSchema.error){
             const errors = validateSchema.error.details.map(error => error.message)
-            return res.send(errors).status(422)
+            return res.status(422).send(errors)
         }  
         
         const {rows: userDB} = await connection.query(`SELECT (email) FROM users WHERE email = $1`,[user.email])
@@ -35,7 +35,7 @@ async function validateLogin(req, res, next){
         const validateSchema = LoginSchema.validate(user, {abortEarly: false})
         if(validateSchema.error){
             const errors = validateSchema.error.details.map(error => error.message)
-            return res.send(errors).status(422)
+            return res.status(422).send(errors)
         }
 
         const {rows: userDB} = await connection.query(`SELECT * FROM users WHERE email = $1 `,[user.email])
