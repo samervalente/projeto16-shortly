@@ -37,7 +37,7 @@ async function validateGetShortURLByParams(req, res, next){
             if(shortURL.length === 0 ){
                 return res.status(400).send("Esta URL não existe")
             }
-
+            console.log("passou pelo middleware")
             res.locals.shortURL = shortURL[0]
             next()
 

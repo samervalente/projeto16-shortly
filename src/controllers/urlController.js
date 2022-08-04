@@ -21,11 +21,12 @@ async function shortenURL(req, res){
 
 
 async function getShortURL(req, res){
+    
     const shortURL = res.locals.shortURL
     try {
             return res.status(200).send(shortURL)
     } catch (error) {
-        console.log(error)
+        
         res.sendStatus(500)
     }
 }
@@ -33,9 +34,12 @@ async function getShortURL(req, res){
 async function OpenShortURL(req, res){
     const shortURL = res.locals.shortURL
     try {
+       
         await connection.query(`UPDATE urls SET "visitCount" = urls."visitCount" + 1 WHERE id = $1`,[shortURL.id])
-        res.redirect(shortURL.url)
+        
+        res.redirect(shortURL.shorturl)
     } catch (error) {
+
         return res.sendStatus(500)
     }
 }
@@ -91,5 +95,7 @@ async function getRanking(req, res){
         res.sendStatus(500)
     }
 }
+
+
 
 export {shortenURL, getShortURL, OpenShortURL, deleteURL, getUserURLs, getRanking}

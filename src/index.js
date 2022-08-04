@@ -5,10 +5,14 @@ import userRouter from "./routes/userRouter.js"
 import URLRouter from "./routes/urlRouter.js"
 dotenv.config()
 
+
 const PORT = process.env.PORT
 const app = express()
 
-app.use([cors(), express.json()])
+app.use(express.json())
+app.use(cors())
+
+  
 app.use(userRouter)
 app.use(URLRouter)
 
