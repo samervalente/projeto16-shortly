@@ -5,14 +5,14 @@ import { customAlphabet } from "nanoid";
 async function shortenURL(req, res){
     let url = req.body.url
     const {id: userId} = res.locals
-    console.log(res.locals.id)
+    
     try {
         let nanoid =  customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz',10)
         const shortUrl = nanoid(8)
-        
         await connection.query(`INSERT INTO urls ("userId", url, "shortURL") VALUES ($1,$2,$3)`,[userId, url, shortUrl])
         
-        return res.sendStatus(201)
+        
+        return res.status(201).send({shortUrl})
     } catch (error) {
         console.log(error)
         return res.sendStatus(500)
@@ -36,10 +36,11 @@ async function OpenShortURL(req, res){
     try {
        
         await connection.query(`UPDATE urls SET "visitCount" = urls."visitCount" + 1 WHERE id = $1`,[shortURL.id])
-        
-        res.redirect(shortURL.shorturl)
+        res.setHeader("Access-Control-Allow-Origin", ['*'])
+  
+        return res.redirect(shortURL.url)
     } catch (error) {
-
+        console.log(error)
         return res.sendStatus(500)
     }
 }

@@ -11,7 +11,7 @@ async function validateURL(req,res,next){
         const validateSchema = URLSchema.validate(url, {abortEarly: false})
         if(validateSchema.error){
             const errors = validateSchema.error.details.map(error => error.message)
-            return res.send(errors).status(422)
+            return res.status(422).send(errors)
         }
         
         next()
