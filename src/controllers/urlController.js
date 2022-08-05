@@ -69,6 +69,7 @@ async function getUserURLs(req, res){
 
         res.send(mountOutput(userTotalVisitCounts[0], userShortenedUrls))
     } catch (error) {
+        console.log(error)
         res.sendStatus(500)
     }
 }
@@ -93,6 +94,7 @@ async function getRanking(req, res){
 
         res.status(200).send(ranking)
     } catch (error) {
+        console.log(error)
         res.sendStatus(500)
     }
 }

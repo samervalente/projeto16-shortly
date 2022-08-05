@@ -9,6 +9,7 @@ async function RegisterUser(req, res){
         return res.sendStatus(201)
 
     } catch (error) {
+        
          res.sendStatus(500)
     } 
 }

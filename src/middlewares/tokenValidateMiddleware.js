@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export default async function ValidateToken(req, res, next){
    try {
-    const token = req.headers.authorization.replace("bearer ", "")
+    const token = req.headers.authorization.replace("Bearer ", "")
     const {id} = jwt.verify(token, "secret")
     if(!token || !id){
         return res.sendStatus(401)
