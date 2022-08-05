@@ -4,6 +4,7 @@ import connection from "../database/postgre.js";
 
 async function validateRegister(req,res, next){
     let user = req.body
+    
     try {
         const validateSchema = RegisterSchema.validate(user, {abortEarly: false})
         if(validateSchema.error){
@@ -20,6 +21,7 @@ async function validateRegister(req,res, next){
         user = {...user , password: passwordCrypt}
 
          res.locals.user = user
+         
          next()
 
     } catch (error) {
@@ -57,6 +59,7 @@ async function validateLogin(req, res, next){
     }
 }
 
+
 async function validateUserExistence(req, res, next){
     
     try {
@@ -66,10 +69,12 @@ async function validateUserExistence(req, res, next){
             return res.status(404).send("Usuário não encontrado")
         }
 
+        
         next()
 
 
     } catch (error) {
+        console.log(error)
         res.sendStatus(500)
     }
 }
