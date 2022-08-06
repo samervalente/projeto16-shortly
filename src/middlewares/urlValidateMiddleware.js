@@ -29,21 +29,22 @@ async function validateGetShortURLByParams(req, res, next){
         id ?  
         Clause = {column: 'id', value: id } : 
         Clause = {column: "shortURL", value: shortUrl}
-      
+        
         const getShortURLQuery = `
         SELECT urls.id, urls."shortURL" as shortUrl, urls.url FROM urls WHERE "${Clause.column}" = $1` 
 
             const {rows: shortURL} = await connection.query(getShortURLQuery, [Clause.value])
             if(shortURL.length === 0 ){
-                return res.status(400).send("Esta URL não existe")
+                return res.status(404).send("Esta URL não existe")
             }
-            console.log("passou pelo middleware")
+            
             res.locals.shortURL = shortURL[0]
+           
             next()
 
 
     } catch (error) {
-        console.log(error)
+        
         return res.sendStatus(500)
     }
 }

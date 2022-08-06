@@ -1,11 +1,10 @@
 import jwt from "jsonwebtoken"
-import connection from "../database/postgre.js"
-
+import {insertUser} from "../repository/userRepository.js"
 
 async function RegisterUser(req, res){
+    const {name, email, password} = res.locals.user
     try {
-        const {name, email, password} = res.locals.user
-        await connection.query(`INSERT INTO users (name, email, password) VALUES ($1,$2,$3)`,[name, email, password])
+        insertUser(name, email, password)
         return res.sendStatus(201)
 
     } catch (error) {
@@ -19,13 +18,12 @@ async function LoginUser(req, res){
         const user = res.locals.user
         const token = jwt.sign({id: user.id}, 'secret')
        
-        return res.status(200).send({...user, token})
+        return res.status(200).send({name:user.name, token})
 
     } catch (error) {
         return res.sendStatus(500)
     }
 }
-
 
 
 export {RegisterUser, LoginUser}

@@ -1,27 +1,27 @@
 import connection from "../database/postgre.js";
 import { customAlphabet } from "nanoid";
-
+import {shortenUserURl} from "../repository/urlRepository.js"
+import dotenv from "dotenv"
+dotenv.config()
 
 async function shortenURL(req, res){
     let url = req.body.url
     const {id: userId} = res.locals
     
     try {
-        let nanoid =  customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz',10)
+        let nanoid =  customAlphabet(process.env.NANO_ID_CUSTOM_ALPHABET,10)
         const shortUrl = nanoid(8)
-        await connection.query(`INSERT INTO urls ("userId", url, "shortURL") VALUES ($1,$2,$3)`,[userId, url, shortUrl])
-        
-        
+
+        await shortenUserURl(userId, url, shortUrl)
+
         return res.status(201).send({shortUrl})
     } catch (error) {
-        console.log(error)
         return res.sendStatus(500)
     }
 }
 
 
 async function getShortURL(req, res){
-    
     const shortURL = res.locals.shortURL
     try {
             return res.status(200).send(shortURL)
@@ -36,9 +36,9 @@ async function OpenShortURL(req, res){
     try {
        
         await connection.query(`UPDATE urls SET "visitCount" = urls."visitCount" + 1 WHERE id = $1`,[shortURL.id])
-        res.setHeader("Access-Control-Allow-Origin", ['*'])
-  
-        return res.redirect(shortURL.url)
+        console.log(shortURL.url)
+        return res.redirect('ok')
+
     } catch (error) {
         console.log(error)
         return res.sendStatus(500)

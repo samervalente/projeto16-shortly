@@ -8,10 +8,7 @@ const routes = Router()
 routes.post('/urls/shorten', validateToken, validateURL, shortenURL)
 routes.get("/urls")
 routes.get('/urls/:id', validateGetShortURLByParams, getShortURL)
-routes.get('/urls/open/:shortUrl',function(req, res, next) {
-
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next() }   , validateGetShortURLByParams, OpenShortURL)
+routes.get('/urls/open/:shortUrl', validateGetShortURLByParams, OpenShortURL)
 routes.delete('/urls/:id', validateGetShortURLByParams, deleteURL)
 routes.get("/users/me", validateToken, validateUserExistence, getUserURLs)
 routes.get("/ranking", getRanking)
