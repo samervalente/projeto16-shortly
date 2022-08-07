@@ -6,8 +6,8 @@ dotenv.config()
 export default async function ValidateToken(req, res, next){
    try {
     const token = req.headers.authorization.replace("Bearer ", "")
-    console.log(token)
-    const {id} = jwt.verify(token, process.env.JWT_KEY)
+    
+    const {id} = jwt.verify(token,'secret')
     if(!token || !id){
         return res.sendStatus(401)
     }
@@ -17,6 +17,7 @@ export default async function ValidateToken(req, res, next){
     res.locals.id = id
     next()
    } catch (error) {
+    console.log(error)
     res.sendStatus(500)
    }
 }

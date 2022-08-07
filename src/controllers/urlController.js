@@ -8,13 +8,14 @@ async function shortenURL(req, res){
     const {id: userId} = res.locals
     
     try {
-        let nanoid =  customAlphabet(process.env.NANO_ID_CUSTOM_ALPHABET,10)
+        let nanoid =  customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz',10)
         const shortUrl = nanoid(8)
 
         await shortenUserURl(userId, url, shortUrl)
         return res.status(201).send({shortUrl})
 
     } catch (error) {
+        console.log(error)
         return res.sendStatus(500)
     }
 }
