@@ -1,7 +1,5 @@
-import joi from "joi"
-import connection from "../database/postgre.js"
 import URLSchema from "../schemas/urlSchema.js"
-
+import {getShortURL} from "./middlewaresRepositories/urlRepository.js"
 
 async function validateURL(req,res,next){
     const url = req.body
@@ -22,29 +20,16 @@ async function validateURL(req,res,next){
 }
 
 async function validateGetShortURLByParams(req, res, next){
-    const {id, shortUrl} = req.params
-    let Clause = {column: "", value:""}
-    
     try {
-        id ?  
-        Clause = {column: 'id', value: id } : 
-        Clause = {column: "shortURL", value: shortUrl}
-        
-        const getShortURLQuery = `
-        SELECT urls.id, urls."shortURL" as shortUrl, urls.url FROM urls WHERE "${Clause.column}" = $1` 
-
-            const {rows: shortURL} = await connection.query(getShortURLQuery, [Clause.value])
-            if(shortURL.length === 0 ){
+        const shortURL = await getShortURL(req.params)
+            if(shortURL === undefined){
                 return res.status(404).send("Esta URL não existe")
-            }
-            
-            res.locals.shortURL = shortURL[0]
-           
+            }  
+
+            res.locals.shortURL = shortURL
             next()
 
-
     } catch (error) {
-        
         return res.sendStatus(500)
     }
 }

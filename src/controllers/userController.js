@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken"
-import {insertUser} from "../repository/userRepository.js"
+import {insertUser} from "./controllersRespositories/userRepository.js"
 
 async function RegisterUser(req, res){
     const {name, email, password} = res.locals.user
@@ -8,7 +8,6 @@ async function RegisterUser(req, res){
         return res.sendStatus(201)
 
     } catch (error) {
-        
          res.sendStatus(500)
     } 
 }

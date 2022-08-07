@@ -1,6 +1,6 @@
 import { RegisterSchema, LoginSchema } from "../schemas/userSchema.js";
 import bcrypt from "bcrypt"
-import connection from "../database/postgre.js";
+import {queryUserEmailOnDB, queryUserOnDB} from "./middlewaresRepositories/userRepository.js"
 
 async function validateRegister(req,res, next){
     let user = req.body
@@ -12,8 +12,9 @@ async function validateRegister(req,res, next){
             return res.status(422).send(errors)
         }  
         
-        const {rows: userDB} = await connection.query(`SELECT (email) FROM users WHERE email = $1`,[user.email])
-        if(userDB.length !== 0 ){
+        const userEmailOnDB = await queryUserEmailOnDB(user.email);
+        
+        if(userEmailOnDB !== undefined ){
             return res.status(409).send("Usuário existente")
         }
         
@@ -21,11 +22,9 @@ async function validateRegister(req,res, next){
         user = {...user , password: passwordCrypt}
 
          res.locals.user = user
-         
          next()
 
     } catch (error) {
-        console.log(error)
         res.sendStatus(500)
     }
 }
@@ -41,18 +40,18 @@ async function validateLogin(req, res, next){
             return res.status(422).send(errors)
         }
 
-        const {rows: userDB} = await connection.query(`SELECT * FROM users WHERE email = $1 `,[user.email])
-        if(userDB.length === 0){
+        const userOnDB = await queryUserOnDB(user.email);
+        if(userOnDB === undefined){
             return res.status(400).send("Usuário ou senha incorreta")
         }
-
-        const isPasswordCorrect = bcrypt.compareSync(user.password, userDB[0].password)
+        
+        const isPasswordCorrect = bcrypt.compareSync(user.password, userOnDB.password)
         if(!isPasswordCorrect){
             return res.status(401).send("Usuário ou senha incorreta") 
         }
 
-        delete userDB[0].password
-        res.locals.user = userDB[0]
+        delete userOnDB.password
+        res.locals.user = userOnDB
         next()
 
     } catch (error) {
@@ -62,20 +61,16 @@ async function validateLogin(req, res, next){
 
 
 async function validateUserExistence(req, res, next){
-    
+    const {id: userId} = res.locals
     try {
-        const {id: userId} = res.locals
-        const {rows: user} = await connection.query(`SELECT * FROM users WHERE id = $1`,[userId])
-        if(user.length === 0 ){
+        const userOnDB = await queryUserOnDB(userId)
+        if(userOnDB === undefined ){
             return res.status(404).send("Usuário não encontrado")
-        }
-
-        
+        }  
         next()
 
 
     } catch (error) {
-        console.log(error)
         res.sendStatus(500)
     }
 }

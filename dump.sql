@@ -16,12 +16,12 @@ CREATE TABLE urls (
 	"url" TEXT NOT NULL UNIQUE,
 	"visitCount" integer NOT NULL,
 	"createdAt" TIMESTAMP NOT NULL,
-	CONSTRAINT "urls_pk" PRIMARY KEY ("id")
+	CONSTRAINT "public.urls_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
 );
 
-ALTER TABLE "urls" ADD CONSTRAINT "urls_fk0" FOREIGN KEY ("userId") REFERENCES "users"("id");
+ALTER TABLE "public.urls" ADD CONSTRAINT "urls_fk0" FOREIGN KEY ("userId") REFERENCES "users"("id");
 
 
 
