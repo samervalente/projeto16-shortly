@@ -37,7 +37,7 @@ async function OpenShortURL(req, res){
     try {
        
         await updateVisitCount(id)
-        return res.redirect(url)
+        return res.redirect(200, url)
 
     } catch (error) {
          res.sendStatus(500)
