@@ -8,14 +8,14 @@ export async function queryUserEmailOnDB(email){
 
 export async function queryUserOnDB(paramsValue){
     let clauseColumn;
-
+    console.log(isUserId(paramsValue))
     switch(true){
         case isEmail(paramsValue): clauseColumn = 'email'
         break;
         case isUserId(paramsValue): clauseColumn = 'id'
         break;
     }
-
+    console.log(clauseColumn)
     const {rows: userDB} = await connection.query(`SELECT * FROM users WHERE ${clauseColumn} = $1`,[paramsValue])
    
     return userDB[0]

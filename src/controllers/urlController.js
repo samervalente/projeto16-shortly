@@ -15,7 +15,7 @@ async function shortenURL(req, res){
         return res.status(201).send({shortUrl})
 
     } catch (error) {
-        console.log(error)
+        
         return res.sendStatus(500)
     }
 }
@@ -35,7 +35,7 @@ async function getShortURL(req, res){
 async function OpenShortURL(req, res){
     const {id, url} = res.locals.shortURL
     try {
-       
+    
         await updateVisitCount(id)
         return res.redirect(200, url)
 
@@ -62,9 +62,11 @@ async function getUserURLs(req, res){
     try {
 
         const userURLS = await getUserURLS(userId)
+        console.log(userURLS)
         res.send(userURLS)
 
     } catch (error) {
+        
         res.sendStatus(500)
     }
 }

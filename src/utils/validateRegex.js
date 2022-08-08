@@ -3,5 +3,6 @@ export function isEmail(email){
 }
 
 export function isUserId(id){
-    return /^\s*[0-9]\s*$/.test(id)
+    return /^[1-9][0-9]*$/.test(id)
 }
+

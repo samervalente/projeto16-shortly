@@ -62,8 +62,10 @@ async function validateLogin(req, res, next){
 
 async function validateUserExistence(req, res, next){
     const {id: userId} = res.locals
+   
     try {
         const userOnDB = await queryUserOnDB(userId)
+        
         if(userOnDB === undefined ){
             return res.status(404).send("Usuário não encontrado")
         }  
@@ -71,6 +73,7 @@ async function validateUserExistence(req, res, next){
 
 
     } catch (error) {
+        
         res.sendStatus(500)
     }
 }
