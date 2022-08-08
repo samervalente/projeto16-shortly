@@ -12,11 +12,10 @@ async function shortenURL(req, res){
         const shortUrl = nanoid(8)
 
         await shortenUserURl(userId, url, shortUrl)
-        return res.status(201).send({shortUrl})
+        res.status(201).send({shortUrl})
 
     } catch (error) {
-        
-        return res.sendStatus(500)
+        res.status(500).send(error)
     }
 }
 
@@ -25,10 +24,10 @@ async function getShortURL(req, res){
     const shortURL = res.locals.shortURL
     try {
 
-        return res.status(200).send(shortURL)
+        res.status(200).send(shortURL)
 
     } catch (error) {
-        res.sendStatus(500)
+        res.status(500).send(error)
     }
 }
 
@@ -37,10 +36,10 @@ async function OpenShortURL(req, res){
     try {
     
         await updateVisitCount(id)
-        return res.redirect(200, url)
+        res.redirect(200, url)
 
     } catch (error) {
-         res.sendStatus(500)
+         res.status(500).send(error)
     }
 }
 
@@ -52,7 +51,7 @@ async function deleteURL(req, res){
        res.sendStatus(200)
 
     } catch (error) {
-        res.sendStatus(500)
+        res.status(500).send(error)
     }
 }
 
@@ -65,9 +64,8 @@ async function getUserURLs(req, res){
         console.log(userURLS)
         res.send(userURLS)
 
-    } catch (error) {
-        
-        res.sendStatus(500)
+    } catch (error) {   
+        res.status(500).send(error)
     }
 }
 
@@ -78,7 +76,7 @@ async function getRanking(req, res){
         res.status(200).send(ranking)
 
     } catch (error) {
-        res.sendStatus(500)
+        res.status(500).send(error)
     }
 }
 
