@@ -6,7 +6,6 @@ import {validateUserExistence} from "../middlewares/userValidateMiddleware.js"
 const routes = Router()
 
 routes.post('/urls/shorten', validateToken, validateURL, shortenURL)
-routes.get("/urls")
 routes.get('/urls/:id', validateGetShortURLByParams, getShortURL)
 routes.get('/urls/open/:shortUrl', validateGetShortURLByParams, OpenShortURL)
 routes.delete('/urls/:id', validateGetShortURLByParams, deleteURL)
