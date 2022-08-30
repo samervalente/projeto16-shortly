@@ -1,11 +1,14 @@
+
 import URLSchema from "../schemas/urlSchema.js"
 import {getShortURL} from "./middlewaresRepositories/urlRepository.js"
 
 async function validateURL(req,res,next){
     const url = req.body
-
+    const UrlObjectIsEmpty = Object.keys(url).length === 0 
     try {
-    
+        if(UrlObjectIsEmpty){
+            return res.sendStatus(404)
+        }
         const validateSchema = URLSchema.validate(url, {abortEarly: false})
         if(validateSchema.error){
             const errors = validateSchema.error.details.map(error => error.message)
